@@ -1,1 +1,3 @@
+package view
+
 interface AppBaseView {}

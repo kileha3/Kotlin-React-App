@@ -1,3 +1,5 @@
+package util
+
 import com.ccfraser.muirwik.components.Colors
 import kotlinx.css.Color
 

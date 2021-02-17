@@ -1,24 +1,32 @@
-import ComponentStyles.rootDiv
+package view
+
+import AppBaseState
+import util.ComponentStyles.rootDiv
+import modal.Person
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.mIconButton
+import com.ccfraser.muirwik.components.form.MFormControlVariant
 import com.ccfraser.muirwik.components.list.mList
 import com.ccfraser.muirwik.components.list.mListItemWithIcon
+import com.ccfraser.muirwik.components.menu.mMenuItem
 import com.ccfraser.muirwik.components.styles.Breakpoint
 import com.ccfraser.muirwik.components.styles.down
 import com.ccfraser.muirwik.components.styles.up
+import controller.MainComponentPresenter
 import kotlinext.js.jsObject
+import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.css.*
-import react.RBuilder
-import react.RProps
-import react.setState
+import react.*
+import react.dom.link
+import react.router.dom.*
 import styled.StyleSheet
 import styled.css
 import styled.styledDiv
 
-interface MainComponentState: AppBaseState{
+interface MainComponentState: AppBaseState {
     var currentView: String
     var responsiveDrawerOpen: Boolean
     var personInfo: Person?
@@ -30,7 +38,7 @@ interface MainComponentProps: RProps{
     var onLocaleChange: (locale: String) -> Unit
 }
 
-class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentProps,MainComponentState>(props),
+class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentProps, MainComponentState>(props),
     MainComponentView {
 
     private var mPresenter: MainComponentPresenter = MainComponentPresenter(mapOf(), this)
@@ -67,7 +75,7 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
 
                 styledDiv {
 
-                    css { +rootDiv}
+                    css { +rootDiv }
 
                     mAppBar(position = MAppBarPosition.absolute) {
                         css {
@@ -77,19 +85,19 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                                 width = 100.pct - drawerWidth
                             }
                         }
+
                         mToolbar {
                             mHidden(mdUp = true, implementation = MHiddenImplementation.css) {
                                 mIconButton("menu", color = MColor.inherit, onClick = { mPresenter.handleUpdateDrawerState()})
                             }
+
                             mToolbarTitle(state.currentView)
-                            mIconButton("add_circle", onClick = {
-                                mPresenter.handleThemeChange()
-                            })
 
                             mAvatar {
                                 attrs{
                                     src = state.personInfo?.profile?:""
                                     sizes = "large"
+                                    onClick = {mPresenter.handleThemeChange()}
                                 }
                                 +"${state.personInfo?.name?.subSequence(0,1)}"
                             }
@@ -136,7 +144,12 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                                 padding(2.spacingUnits)
                                 backgroundColor = Color(theme.palette.background.default)
                             }
-                            +"nameToTestMap[state.view]?.invoke(this)"
+                            hashRouter {
+                               switch{
+                                   route("/Schools", SchoolsComponent::class, exact = true)
+                                   route("/Content", ContentComponent::class, exact = true)
+                               }
+                           }
                         }
                     }
                 }
@@ -151,8 +164,13 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                     backgroundColor = Color(theme.palette.background.paper)
                     width = if (fullWidth) LinearDimension.auto else drawerWidth
                 }
-                mListItemWithIcon("library_books", "Content", divider = false)
-                mListItemWithIcon("school", "Schools", divider = false)
+
+                mListItemWithIcon("library_books", "Content", divider = false, onClick = {
+                    window.location.assign("#/Content")
+                })
+                mListItemWithIcon("school", "Schools", divider = false, onClick = {
+                    window.location.assign("#/Schools")
+                })
                 mListItemWithIcon("group", "Classes", divider = false)
                 mListItemWithIcon("pie_chart", "Report", divider = true)
                 mListItemWithIcon("person", "People", divider = false)
@@ -197,8 +215,8 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
     }
 }
 
-fun RBuilder.mainComponent(initialView: String, onThemeChange: () -> Unit,
-                           onLocaleChange: (locale:String) -> Unit) = child(MainComponent::class){
+fun RBuilder.initMainComponent(initialView: String, onThemeChange: () -> Unit,
+                               onLocaleChange: (locale:String) -> Unit) = child(MainComponent::class){
     attrs.initialView = initialView
     attrs.onThemeChange = onThemeChange
     attrs.onLocaleChange = onLocaleChange

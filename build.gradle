@@ -15,6 +15,7 @@ dependencies {
     def kotlinJsVersion = "pre.145-kotlin-1.4.30"
     testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
     implementation "org.jetbrains:kotlin-react:17.0.1-$kotlinJsVersion"
+    implementation "org.jetbrains:kotlin-react-router-dom:5.2.0-$kotlinJsVersion"
     implementation "org.jetbrains:kotlin-react-dom:17.0.1-$kotlinJsVersion"
     implementation "org.jetbrains:kotlin-styled:5.2.1-$kotlinJsVersion"
     implementation "org.jetbrains:kotlin-redux:4.0.5-$kotlinJsVersion"

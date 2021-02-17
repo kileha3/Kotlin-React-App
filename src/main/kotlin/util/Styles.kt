@@ -1,4 +1,5 @@
-import com.ccfraser.muirwik.components.spacingUnits
+package util
+
 import kotlinx.css.*
 import styled.StyleSheet
 
@@ -8,9 +9,5 @@ object ComponentStyles : StyleSheet("ComponentStyles", isStatic = true) {
         position = Position.relative
         display = Display.flex
         width = 100.pct
-    }
-
-    val profileImage by css {
-        display = Display.inlineBlock
     }
 }

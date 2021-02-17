@@ -1,3 +1,7 @@
+package view
+
+import modal.Person
+
 interface MainComponentView: AppBaseView {
 
     fun updateDrawerState()
