@@ -1,20 +1,14 @@
 import com.ccfraser.muirwik.components.Colors
-import com.ccfraser.muirwik.components.styles.Theme
-import com.ccfraser.muirwik.components.styles.ThemeOptions
-import com.ccfraser.muirwik.components.styles.createMuiTheme
+import kotlinx.css.Color
 
 object AppUtils {
 
+    val PRIMARY_COLOR: Color = Colors.Teal.shade500
 
-    fun createTheme(state: AppBaseState): Theme {
-        @Suppress("UnsafeCastFromDynamic")
-        val themeOptions: ThemeOptions = js("({palette: { type: 'placeholder', primary: {main: 'placeholder'}}})")
-        themeOptions.palette?.type = state.themeColor
-        themeOptions.palette?.primary.main = Colors.Teal.shade600.toString()
-        return createMuiTheme(themeOptions)
-    }
+    val PRIMARY_COLOR_LIGHT: Color = Colors.Teal.shade100
 
     fun go(destination: String, args: Map<String,String>){
+
     }
 
 }
