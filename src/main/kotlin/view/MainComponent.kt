@@ -1,41 +1,46 @@
 package view
 
 import AppBaseState
-import util.ComponentStyles.rootDiv
-import modal.Person
 import com.ccfraser.muirwik.components.*
 import com.ccfraser.muirwik.components.button.mIconButton
-import com.ccfraser.muirwik.components.form.MFormControlVariant
 import com.ccfraser.muirwik.components.list.mList
 import com.ccfraser.muirwik.components.list.mListItemWithIcon
-import com.ccfraser.muirwik.components.menu.mMenuItem
 import com.ccfraser.muirwik.components.styles.Breakpoint
 import com.ccfraser.muirwik.components.styles.down
 import com.ccfraser.muirwik.components.styles.up
 import controller.MainComponentPresenter
 import kotlinext.js.jsObject
-import kotlinx.browser.window
+import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.css.*
-import react.*
-import react.dom.link
-import react.router.dom.*
+import modal.MenuItem
+import modal.Person
+import react.RBuilder
+import react.RProps
+import react.router.dom.hashRouter
+import react.router.dom.route
+import react.router.dom.switch
+import react.setState
 import styled.StyleSheet
 import styled.css
 import styled.styledDiv
+import util.AppUtils
+import util.ComponentStyles.rootDiv
 
 interface MainComponentState: AppBaseState {
     var currentView: String
     var responsiveDrawerOpen: Boolean
     var personInfo: Person?
+    var isRTLSupport: Boolean
+    var translations: dynamic
+    var currentLocale: String
 }
 
 interface MainComponentProps: RProps{
     var initialView: String
     var onThemeChange: () -> Unit
-    var onLocaleChange: (locale: String) -> Unit
 }
 
 class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentProps, MainComponentState>(props),
@@ -55,8 +60,11 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
     }
 
     override fun MainComponentState.init(props: MainComponentProps) {
-        currentView = props.initialView
         responsiveDrawerOpen = false
+        isRTLSupport = false
+        currentLocale = "en-US"
+        translations = AppUtils.getTranslations(currentLocale)
+        currentView = translations["content"]
     }
 
     override fun RBuilder.render() {
@@ -71,6 +79,7 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                     overflow = Overflow.hidden
                     position = Position.relative
                     display = Display.flex
+                    backgroundColor = Color(theme.palette.background.paper)
                 }
 
                 styledDiv {
@@ -80,9 +89,9 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                     mAppBar(position = MAppBarPosition.absolute) {
                         css {
                             position = Position.absolute
-                            marginLeft = drawerWidth
+                            marginLeft = if(state.isRTLSupport) 0.px else drawerWidth
                             media(theme.breakpoints.up(Breakpoint.md)) {
-                                width = 100.pct - drawerWidth
+                                width = 100.pct - if(state.isRTLSupport) 0.px else drawerWidth
                             }
                         }
 
@@ -97,7 +106,6 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                                 attrs{
                                     src = state.personInfo?.profile?:""
                                     sizes = "large"
-                                    onClick = {mPresenter.handleThemeChange()}
                                 }
                                 +"${state.personInfo?.name?.subSequence(0,1)}"
                             }
@@ -126,8 +134,9 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                     // Main content area
                     styledDiv {
                         css {
-                            height = 100.pct
-                            flexGrow = 1.0; minWidth = 0.px
+                            height = LinearDimension.fillAvailable
+                            flexGrow = 1.0
+                            minWidth = 0.px
                             backgroundColor = Color(theme.palette.background.default)
                         }
                         appBarSpacer()
@@ -146,8 +155,10 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                             }
                             hashRouter {
                                switch{
+                                   route("/", ContentComponent::class, exact = true)
                                    route("/Schools", SchoolsComponent::class, exact = true)
                                    route("/Content", ContentComponent::class, exact = true)
+                                   route("/ContentDetails", ContentDetailsComponent::class, exact = true)
                                }
                            }
                         }
@@ -165,16 +176,39 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                     width = if (fullWidth) LinearDimension.auto else drawerWidth
                 }
 
-                mListItemWithIcon("library_books", "Content", divider = false, onClick = {
-                    window.location.assign("#/Content")
-                })
-                mListItemWithIcon("school", "Schools", divider = false, onClick = {
-                    window.location.assign("#/Schools")
-                })
-                mListItemWithIcon("group", "Classes", divider = false)
-                mListItemWithIcon("pie_chart", "Report", divider = true)
-                mListItemWithIcon("person", "People", divider = false)
-                mListItemWithIcon("settings", "Settings", divider = false)
+                listOf(
+                    MenuItem("library_books","content"),
+                    MenuItem("school","schools"),
+                    MenuItem("format_textdirection_r_to_l","direction"),
+                    MenuItem("language","language"),
+                    MenuItem("lightbulb","theme")
+                ).forEachIndexed { index, item ->
+                    mListItemWithIcon(item.icon, state.translations[item.label], divider = index == 2, onClick = {
+                        if(index < 2){
+                            setState {
+                                currentView = translations[item.label]
+                            }
+                            val sub = item.label.subSequence(0,1).toString()
+                            AppUtils.go(item.label.replaceFirst(sub, sub.toUpperCase()))
+                        }else {
+                            setState{
+                                when (index) {
+                                    2 -> {
+                                        isRTLSupport = !isRTLSupport
+                                        document.getElementById("root")?.setAttribute("dir",if(isRTLSupport) "rtl" else "ltr")
+                                    }
+                                    3 -> {
+                                        currentLocale = if(currentLocale == "en-US") "sw-Tz" else "en-US"
+                                        translations = AppUtils.getTranslations(currentLocale)
+                                    }
+                                    else -> {
+                                        mPresenter.handleThemeChange()
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
             }
         }
     }
@@ -209,15 +243,9 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
     override fun onThemeChange() {
         props.onThemeChange()
     }
-
-    override fun onLocaleChange(locale: String) {
-        props.onLocaleChange(locale)
-    }
 }
 
-fun RBuilder.initMainComponent(initialView: String, onThemeChange: () -> Unit,
-                               onLocaleChange: (locale:String) -> Unit) = child(MainComponent::class){
+fun RBuilder.initMainComponent(initialView: String, onThemeChange: () -> Unit) = child(MainComponent::class){
     attrs.initialView = initialView
     attrs.onThemeChange = onThemeChange
-    attrs.onLocaleChange = onLocaleChange
 }

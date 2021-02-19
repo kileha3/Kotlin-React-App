@@ -20,10 +20,6 @@ class MainComponentPresenter(private val arguments: Map<String,String>, private 
         view.onThemeChange()
     }
 
-    fun handleLocaleChange(){
-        view.onLocaleChange("sw")
-    }
-
     fun handleUpdateDrawerState(){
         view.updateDrawerState()
     }

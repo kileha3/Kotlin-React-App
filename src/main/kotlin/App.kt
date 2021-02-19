@@ -1,4 +1,4 @@
-import util.AppUtils.PRIMARY_COLOR
+import com.ccfraser.muirwik.components.Colors
 import com.ccfraser.muirwik.components.mCssBaseline
 import com.ccfraser.muirwik.components.mThemeProvider
 import com.ccfraser.muirwik.components.styles.ThemeOptions
@@ -12,7 +12,6 @@ import view.AppBaseComponent
 
 interface AppBaseState: RState {
     var themeColor: String
-    var currentLocale: String
 }
 
 class App(props: RProps): AppBaseComponent<RProps, AppBaseState>(props) {
@@ -23,12 +22,10 @@ class App(props: RProps): AppBaseComponent<RProps, AppBaseState>(props) {
         @Suppress("UnsafeCastFromDynamic")
         val themeOptions: ThemeOptions = js("({palette: { type: 'placeholder', primary: {main: 'placeholder'}}})")
         themeOptions.palette?.type = state.themeColor
-        themeOptions.palette?.primary.main = PRIMARY_COLOR.toString()
+        themeOptions.palette?.primary.main = Colors.Blue.shade500.toString()
         mThemeProvider(createMuiTheme(themeOptions)) {
            initMainComponent("Content", {
                setState { themeColor = if (themeColor == "dark") "light" else "dark" }
-           },{
-               setState { currentLocale = it}
            })
         }
     }

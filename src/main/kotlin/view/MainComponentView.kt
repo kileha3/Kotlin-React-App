@@ -9,6 +9,4 @@ interface MainComponentView: AppBaseView {
     fun updatePerson(person: Person)
 
     fun onThemeChange()
-
-    fun onLocaleChange(locale: String)
 }
