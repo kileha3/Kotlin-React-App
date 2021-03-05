@@ -126,8 +126,7 @@ object AppUtils {
             "}"
 
     fun go(destination: String, args: Map<String,dynamic> = mapOf()){
-        val params = if(args.isEmpty())  "" else "?"+ args.entries.
-        joinToString("&") { p -> p.key + "=" + p.value.toString()}
+        val params = if(args.isEmpty())  "" else "?"+ args.entries.joinToString("&") { p -> p.key + "=" + p.value.toString()}
         window.location.assign("#/${destination}${params}")
     }
 
@@ -140,8 +139,17 @@ object AppUtils {
     }
 
     fun getParamFromUrl(paramKey: String): String ?{
+        return try{
+            val params = window.location.hash.split("?")[1]
+            parseURLQueryString(params)[paramKey]
+        }catch (e: Exception){
+            null
+        }
+    }
+
+    fun getParams(): Map<String,String>{
         val params = window.location.hash.split("?")[1]
-        return parseURLQueryString(params)[paramKey]
+        return parseURLQueryString(params)
     }
 
     private fun parseURLQueryString(urlQuery: String): Map<String, String> {

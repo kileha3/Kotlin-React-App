@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="React-Kotlin-App">
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <root id="archive" name="React-Kotlin-App.jar">
+      <element id="module-output" name="WIP.React-Kotlin-App.main" />
+    </root>
+  </artifact>
+</component>

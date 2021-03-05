@@ -1,8 +1,8 @@
 package modal
 
 data class Entry (
-    val name: String,
-    val id: String,
-    val description: String,
-    val thumbnail: String
+    var name: String,
+    var id: String,
+    var description: String,
+    var thumbnail: String
 )

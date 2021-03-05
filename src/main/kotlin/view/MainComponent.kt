@@ -159,6 +159,7 @@ class MainComponent(props: MainComponentProps): AppBaseComponent<MainComponentPr
                                    route("/Schools", SchoolsComponent::class, exact = true)
                                    route("/Content", ContentComponent::class, exact = true)
                                    route("/ContentDetails", ContentDetailsComponent::class, exact = true)
+                                   route("/ContentEdit", ContentEditComponent::class, exact = true)
                                }
                            }
                         }

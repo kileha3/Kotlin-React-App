@@ -17,7 +17,16 @@ object ComponentStyles : StyleSheet("ComponentStyles", isStatic = true) {
         padding(1.spacingUnits)
     }
 
-    val inline by css {
-        display = Display.inlineBlock
+
+    val buttonMargin by css {
+        position = Position.fixed
+        bottom = 16.px
+        right = 16.px
+
+    }
+
+    val textField by css {
+        marginLeft = 1.spacingUnits
+        marginRight = 1.spacingUnits
     }
 }

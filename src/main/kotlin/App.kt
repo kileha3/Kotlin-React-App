@@ -24,9 +24,9 @@ class App(props: RProps): AppBaseComponent<RProps, AppBaseState>(props) {
         themeOptions.palette?.type = state.themeColor
         themeOptions.palette?.primary.main = Colors.Blue.shade500.toString()
         mThemeProvider(createMuiTheme(themeOptions)) {
-           initMainComponent("Content", {
+           initMainComponent("Content") {
                setState { themeColor = if (themeColor == "dark") "light" else "dark" }
-           })
+           }
         }
     }
 }
