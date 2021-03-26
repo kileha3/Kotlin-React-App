@@ -5,6 +5,6 @@ Sample app which demonstrate how Kotlin-React eco-system works
 
     ./gradlew browserProductionRun --continuous
 
-## Run the app (Continuous Once)
+## Run the app (Once)
 
     ./gradlew browserProductionRun
