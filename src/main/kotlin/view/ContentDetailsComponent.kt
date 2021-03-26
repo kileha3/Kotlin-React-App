@@ -4,7 +4,6 @@ import com.ccfraser.muirwik.components.MColor
 import com.ccfraser.muirwik.components.button.mFab
 import com.ccfraser.muirwik.components.mTypography
 import com.ccfraser.muirwik.components.themeContext
-import kotlinx.browser.document
 import kotlinx.css.*
 import react.RBuilder
 import react.RProps

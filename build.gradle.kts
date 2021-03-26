@@ -24,6 +24,7 @@ dependencies {
     implementation ("com.ccfraser.muirwik","muirwik-components","0.6.7")
     implementation(npm("sql.js", "^1.4.0"))
     implementation(npm("fs", "^0.0.2"))
+    implementation ("io.ktor:ktor-client-core:1.5.2")
 }
 
 kotlin {
